@@ -17,7 +17,7 @@ type MainWindow() as this =
     let _backgrounds = Dictionary<string, Bitmap>()
     let _characters = Dictionary<string, Bitmap>()
     
-    let paths : Map<string, Dictionary<string, Bitmap> * string> =
+    let paths =
         Map.ofList [
             "backgrounds", (_backgrounds, "Assets/Backgrounds")
             "characters", (_characters, "Assets/Characters")
@@ -28,6 +28,8 @@ type MainWindow() as this =
     do
         this.InitializeComponent()
         this.StretchWindowResolution()
+        this.StretchBackgroundImage()
+        this.SetBackground("bg1.jpg")
 
     
     
@@ -42,6 +44,7 @@ type MainWindow() as this =
         this.WindowStartupLocation <- WindowStartupLocation.CenterScreen
         this.WindowState <- WindowState.FullScreen
         this.SystemDecorations <- SystemDecorations.None
+    
     
     // Stretch & center Background to FullScreen
     member private this.StretchBackgroundImage() =
@@ -66,9 +69,11 @@ type MainWindow() as this =
                 bitmap
         | None ->
             failwithf $"Unknown key: {key}"
+            
 
-
-
+    // Set Background from Dictionary
+    member this.SetBackground(background: string) =
+        this.FindControl<Image>("Background").Source <- this.GetBitmap("backgrounds", background)
 
 
 
