@@ -1,10 +1,13 @@
 namespace Noulla
 
+open System
+open System.IO
 open Avalonia
 open Avalonia.Controls
 open Avalonia.Markup.Xaml
 open System.Collections.Generic
 open Avalonia.Media.Imaging
+open Avalonia.Platform
 
 
 
@@ -14,10 +17,10 @@ type MainWindow() as this =
     let _backgrounds = Dictionary<string, Bitmap>()
     let _characters = Dictionary<string, Bitmap>()
     
-    let directories =
-        dict [
-            "backgrounds", "Assets/Backgrounds"
-            "characters", "Assets/Characters"
+    let paths : Map<string, Dictionary<string, Bitmap> * string> =
+        Map.ofList [
+            "backgrounds", (_backgrounds, "Assets/Backgrounds")
+            "characters", (_characters, "Assets/Characters")
         ]
     
     
@@ -49,11 +52,26 @@ type MainWindow() as this =
         this.FindControl<Image>("Background").Width <- width
         this.FindControl<Image>("Background").Height <- height
     
-    member private this.GetBackground (dict: Dictionary<string, Bitmap>) (basePath: string) (name: string) =
-        
     
-    
-    
+    // Get Bitmap from List of paths
+    member this.GetBitmap(key: string, filename: string) =
+        match paths.TryFind key with
+        | Some (dict, basePath) ->
+            match dict.TryGetValue(filename) with
+            | true, bitmap -> bitmap
+            | false, _ ->
+                let uri: Uri = Uri($"avares://Noulla/{basePath}/{filename}")
+                let bitmap = new Bitmap(AssetLoader.Open(uri))
+                dict.[filename] <- bitmap
+                bitmap
+        | None ->
+            failwithf $"Unknown key: {key}"
+
+
+
+
+
+
     member private this.InitializeComponent() =
         #if DEBUG
         this.AttachDevTools()
