@@ -45,7 +45,7 @@ type MainWindow() as this =
         this.WindowStartupLocation <- WindowStartupLocation.CenterScreen
         this.WindowState <- WindowState.FullScreen
         this.SystemDecorations <- SystemDecorations.None
-    
+        
     
     // Stretch & center Background to FullScreen
     member private this.StretchBackgroundImage() =
@@ -55,7 +55,7 @@ type MainWindow() as this =
             | b -> b.Bounds.Width, b.Bounds.Height
         this.FindControl<Image>("Background").Width <- width
         this.FindControl<Image>("Background").Height <- height
-    
+        
     
     // Get Bitmap from List of paths
     member this.GetBitmap(key: string, filename: string) =
@@ -75,7 +75,7 @@ type MainWindow() as this =
     // Set Background from Dictionary
     member this.SetBackground(background: string) =
         this.FindControl<Image>("Background").Source <- this.GetBitmap("backgrounds", background)
-
+        
     
     // Set Character from Dictionary
     member this.SetCharacter(character: string, position: string) =
@@ -83,7 +83,7 @@ type MainWindow() as this =
         | "left" -> this.FindControl<Image>("CharacterLeftPosition").Source <- this.GetBitmap("characters", character)
         | "right" -> this.FindControl<Image>("CharacterRightPosition").Source <- this.GetBitmap("characters", character)
         | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
-
+        
     
     
     
