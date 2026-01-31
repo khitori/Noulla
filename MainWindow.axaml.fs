@@ -30,6 +30,7 @@ type MainWindow() as this =
         this.StretchWindowResolution()
         this.StretchBackgroundImage()
         this.SetBackground("bg1.jpg")
+        this.SetCharacter("char1.png", "left")
 
     
     
@@ -65,7 +66,7 @@ type MainWindow() as this =
             | false, _ ->
                 let uri: Uri = Uri($"avares://Noulla/{basePath}/{filename}")
                 let bitmap = new Bitmap(AssetLoader.Open(uri))
-                dict.[filename] <- bitmap
+                dict[filename] <- bitmap
                 bitmap
         | None ->
             failwithf $"Unknown key: {key}"
@@ -75,8 +76,18 @@ type MainWindow() as this =
     member this.SetBackground(background: string) =
         this.FindControl<Image>("Background").Source <- this.GetBitmap("backgrounds", background)
 
+    
+    // Set Character from Dictionary
+    member this.SetCharacter(character: string, position: string) =
+        match position with
+        | "left" -> this.FindControl<Image>("CharacterLeftPosition").Source <- this.GetBitmap("characters", character)
+        | "right" -> this.FindControl<Image>("CharacterRightPosition").Source <- this.GetBitmap("characters", character)
+        | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
 
-
+    
+    
+    
+    
     member private this.InitializeComponent() =
         #if DEBUG
         this.AttachDevTools()
