@@ -6,86 +6,46 @@
         x:Class="Noulla.MainWindow"
         Title="Noulla">
     <Grid>
-        <!-- Vertical Spacing -->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="4*" />
-        </Grid.RowDefinitions>
         
-        <!-- Background -->
-        <Image Grid.RowSpan="2"
-               x:Name="Background"
+        <!-- Layer Background -->
+        <Image x:Name="Background"
                Width="256"
                Height="256"
-               Stretch="Uniform" />
+               Stretch="Uniform"/>
         
-        <!-- Characters Layer -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-            
-            <!-- Left Character -->
-            <Border Grid.Column="1" VerticalAlignment="Bottom">
-                <Image x:Name="CharacterLeftPosition" Stretch="Uniform" />
-            </Border>
-            
-            <!-- Center Character -->
-            <Border Grid.Column="2" VerticalAlignment="Bottom">
-                <Image x:Name="CharacterCenterPosition" Stretch="Uniform" />
-            </Border>
-            
-            <!-- Right Character -->
-            <Border Grid.Column="3" VerticalAlignment="Bottom">
-                <Image x:Name="CharacterRightPosition" Stretch="Uniform" />
-            </Border>
-            
-            
-            
-            <Grid x:Name="MainTextPanel"
-                  Grid.Row="1"
-                  VerticalAlignment="Bottom"
-                  IsVisible="True">
-                
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="6" />
-                    <ColumnDefinition Width="3" />
-                </Grid.ColumnDefinitions>
-                
-                <Border Grid.Column="1"
-                        Background="DimGray"
-                        Padding="16">
-                    
-                    <Grid RowDefinitions="Auto,*,Auto">
-                        <TextBlock x:Name="MainTextTitle"
-                                   Grid.Row="0"
-                                   FontSize="18"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,8" />
-                        
-                        <TextBlock x:Name="MainTextBody"
-                                   Grid.Row="1"
-                                   TextWrapping="Wrap" />
-                        
-                        <StackPanel x:Name="BottomChoices"
-                                    Grid.Row="2"
-                                    Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Spacing="12"
-                                    IsVisible="True">
-                            <Button x:Name="Choice1" />
-                            <Button x:Name="Choice2" />
-                            <Button x:Name="Choice3" />
-                        </StackPanel>
-                    </Grid>
+        <!-- Layer Characters -->
+        <Grid RowDefinitions="1*,6*" VerticalAlignment="Bottom">
+            <Grid Grid.Row="1" ColumnDefinitions="*,*,*">
+                <Border Grid.Column="0">
+                    <Image x:Name="CharacterLeftPosition" HorizontalAlignment="Right" Stretch="Uniform"/>
                 </Border>
-                
+                <Border Grid.Column="1">
+                    <Image x:Name="CharacterCenterPosition" HorizontalAlignment="Center" Stretch="Uniform"/>
+                </Border>
+                <Border Grid.Column="2">
+                    <Image x:Name="CharacterRightPosition" HorizontalAlignment="Left" Stretch="Uniform"/>
+                </Border>
             </Grid>
         </Grid>
+        
+        <!-- Layer Text -->
+        <Grid RowDefinitions="*,3*" ColumnDefinitions="*,4*,*" VerticalAlignment="Bottom">
+            <!-- Box Text -->
+            <Grid Grid.Row="1" Grid.Column="1" RowDefinitions="*,4*">
+                <!-- Text Title -->
+                <Grid Grid.Row="0" VerticalAlignment="Top"><TextBlock Text="Title"/></Grid>
+                <!-- Text Body -->
+                <Grid Grid.Row="1" VerticalAlignment="Top"><TextBlock Text="Body"/></Grid>
+                <!-- Text Choice -->
+                <Grid Grid.Row="1" VerticalAlignment="Bottom">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Choice1"/>
+                        <Button Content="Choice2"/>
+                        <Button Content="Choice3"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+        
     </Grid>
 </Window>

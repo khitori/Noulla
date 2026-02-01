@@ -82,6 +82,7 @@ type MainWindow() as this =
         match position with
         | "left" -> this.FindControl<Image>("CharacterLeftPosition").Source <- this.GetBitmap("characters", character)
         | "right" -> this.FindControl<Image>("CharacterRightPosition").Source <- this.GetBitmap("characters", character)
+        | "center" -> this.FindControl<Image>("CharacterCenterPosition").Source <- this.GetBitmap("characters", character)
         | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
         
     
