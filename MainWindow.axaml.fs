@@ -31,7 +31,12 @@ type MainWindow() as this =
         this.StretchBackgroundImage()
         this.SetBackground("bg1.jpg")
         this.SetCharacter("char1.png", "left")
-
+        this.SetTitleText("TEST")
+        this.SetBodyText("TEST")
+        this.SetButtonText("TEST", "left")
+        this.SetButtonText("TEST", "center")
+        this.SetButtonText("TEST", "right")
+    
     
     
     // Stretch & center Window to FullScreen
@@ -46,8 +51,7 @@ type MainWindow() as this =
         this.WindowState <- WindowState.FullScreen
         this.SystemDecorations <- SystemDecorations.None
         
-    
-    // Stretch & center Background to FullScreen
+    // Stretch & center Background image to FullScreen
     member private this.StretchBackgroundImage() =
         let width, height =
             match this.Screens.Primary with
@@ -56,9 +60,8 @@ type MainWindow() as this =
         this.FindControl<Image>("Background").Width <- width
         this.FindControl<Image>("Background").Height <- height
         
-    
     // Get Bitmap from List of paths
-    member this.GetBitmap(key: string, filename: string) =
+    member private this.GetBitmap(key: string, filename: string) =
         match paths.TryFind key with
         | Some (dict, basePath) ->
             match dict.TryGetValue(filename) with
@@ -71,23 +74,35 @@ type MainWindow() as this =
         | None ->
             failwithf $"Unknown key: {key}"
             
-
     // Set Background from Dictionary
-    member this.SetBackground(background: string) =
+    member private this.SetBackground(background: string) =
         this.FindControl<Image>("Background").Source <- this.GetBitmap("backgrounds", background)
         
-    
     // Set Character from Dictionary
-    member this.SetCharacter(character: string, position: string) =
+    member private this.SetCharacter(character: string, position: string) =
         match position with
         | "left" -> this.FindControl<Image>("CharacterLeftPosition").Source <- this.GetBitmap("characters", character)
         | "right" -> this.FindControl<Image>("CharacterRightPosition").Source <- this.GetBitmap("characters", character)
         | "center" -> this.FindControl<Image>("CharacterCenterPosition").Source <- this.GetBitmap("characters", character)
         | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
         
+    // Set Title Text
+    member private this.SetTitleText(text: string) =
+        this.FindControl<TextBlock>("Title").Text <- text
     
-    
-    
+    // Set Body Text
+    member private this.SetBodyText(text: string) =
+        this.FindControl<TextBlock>("Body").Text <- text
+        
+    // Set Button Text
+    member private this.SetButtonText(text: string, position: string) =
+        match position with
+        | "left" -> this.FindControl<Button>("Choice1").Content <- text
+        | "center" -> this.FindControl<Button>("Choice2").Content <- text
+        | "right" -> this.FindControl<Button>("Choice3").Content <- text
+        | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
+            
+            
     
     member private this.InitializeComponent() =
         #if DEBUG

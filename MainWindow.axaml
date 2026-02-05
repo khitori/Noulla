@@ -14,7 +14,8 @@
                Stretch="Uniform"/>
         
         <!-- Layer Characters -->
-        <Grid RowDefinitions="1*,6*" VerticalAlignment="Bottom">
+        <Grid RowDefinitions="1*,6*">
+            <!-- Characters Panel -->
             <Grid Grid.Row="1" ColumnDefinitions="*,*,*">
                 <Border Grid.Column="0">
                     <Image x:Name="CharacterLeftPosition" HorizontalAlignment="Right" Stretch="Uniform"/>
@@ -29,22 +30,54 @@
         </Grid>
         
         <!-- Layer Text -->
-        <Grid RowDefinitions="*,3*" ColumnDefinitions="*,4*,*" VerticalAlignment="Bottom">
-            <!-- Box Text -->
-            <Grid Grid.Row="1" Grid.Column="1" RowDefinitions="*,4*">
-                <!-- Text Title -->
-                <Grid Grid.Row="0" VerticalAlignment="Top"><TextBlock Text="Title"/></Grid>
-                <!-- Text Body -->
-                <Grid Grid.Row="1" VerticalAlignment="Top"><TextBlock Text="Body"/></Grid>
-                <!-- Text Choice -->
-                <Grid Grid.Row="1" VerticalAlignment="Bottom">
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Choice1"/>
-                        <Button Content="Choice2"/>
-                        <Button Content="Choice3"/>
-                    </StackPanel>
+        <Grid RowDefinitions="*,0.6*" ColumnDefinitions="*,1.4*,*">
+            <Border Grid.Row="1" Grid.Column="1">
+                <!-- Box Text -->
+                <Grid RowDefinitions="Auto,*,Auto">
+                
+                    <!-- Title Text -->
+                    <Border Grid.Row="0" HorizontalAlignment="Stretch" Padding="10, 10, 10, 0" Background="DimGray" CornerRadius="20, 20, 0, 0" Opacity="0.95">
+                        <TextBlock x:Name="Title" Text="Title" HorizontalAlignment="Center" MinHeight="50" FontSize="30"/>
+                    </Border>
+                
+                    <!-- Body Text -->
+                    <ScrollViewer Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Gray" Padding="10" Opacity="0.9">
+                        <TextBlock x:Name="Body" Text="Body" HorizontalAlignment="Center" FontSize="20"/>
+                    </ScrollViewer>
+                
+                    <!-- Buttons -->
+                    <Border Grid.Row="2" Padding="2" Background="Gray" Opacity="0.9">
+                        <UniformGrid Columns="3">
+                            <Button Content="Choice1"
+                                    x:Name="Choice1"
+                                    FontSize="20"
+                                    MinHeight="60"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalContentAlignment="Center"
+                                    HorizontalContentAlignment="Center"
+                                    Background="DimGray"/>
+                            <Button Content="Choice2"
+                                    x:Name="Choice2"
+                                    FontSize="20"
+                                    MinHeight="60"
+                                    HorizontalAlignment="Stretch" 
+                                    VerticalContentAlignment="Center"
+                                    HorizontalContentAlignment="Center"
+                                    Background="DimGray"/>
+                            <Button Content="Choice3"
+                                    x:Name="Choice3"
+                                    FontSize="20"
+                                    MinHeight="60"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalContentAlignment="Center"
+                                    HorizontalContentAlignment="Center"
+                                    Background="DimGray"/>
+                        </UniformGrid>
+                    </Border>
+                
                 </Grid>
-            </Grid>
+            </Border>
+            
         </Grid>
         
     </Grid>
