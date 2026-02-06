@@ -27,15 +27,16 @@ type MainWindow() as this =
     
     do
         this.InitializeComponent()
-        this.StretchWindowResolution()
+        //this.StretchWindowResolution()
         this.StretchBackgroundImage()
         this.SetBackground("bg1.jpg")
         this.SetCharacter("char1.png", "left")
         this.SetTitleText("TEST")
         this.SetBodyText("TEST")
-        this.SetButtonText("TEST", "left")
-        this.SetButtonText("TEST", "center")
-        this.SetButtonText("TEST", "right")
+
+        let allButtons = ["left"; "center"; "right"]
+        allButtons |> List.iter (fun f -> this.SetButtonText("TEST", f))
+        //this.ClearCharacter("left")
     
     
     
@@ -73,7 +74,7 @@ type MainWindow() as this =
                 bitmap
         | None ->
             failwithf $"Unknown key: {key}"
-            
+        
     // Set Background from Dictionary
     member private this.SetBackground(background: string) =
         this.FindControl<Image>("Background").Source <- this.GetBitmap("backgrounds", background)
@@ -86,10 +87,18 @@ type MainWindow() as this =
         | "center" -> this.FindControl<Image>("CharacterCenterPosition").Source <- this.GetBitmap("characters", character)
         | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
         
+    // Clear Character
+    member private this.ClearCharacter(position: string) =
+        match position with
+        | "left" -> this.FindControl<Image>("CharacterLeftPosition").Source <- null
+        | "right" -> this.FindControl<Image>("CharacterRightPosition").Source <- null
+        | "center" -> this.FindControl<Image>("CharacterCenterPosition").Source <- null
+        | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
+        
     // Set Title Text
     member private this.SetTitleText(text: string) =
         this.FindControl<TextBlock>("Title").Text <- text
-    
+        
     // Set Body Text
     member private this.SetBodyText(text: string) =
         this.FindControl<TextBlock>("Body").Text <- text
