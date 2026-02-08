@@ -51,44 +51,41 @@
                 
                     <!-- Title Text -->
                     <Border Grid.Row="0" HorizontalAlignment="Stretch" Padding="10, 10, 10, 0" Background="White" CornerRadius="20, 20, 0, 0" Opacity="0.95">
-                        <TextBlock x:Name="Title" Text="Title" HorizontalAlignment="Center" MinHeight="50" FontSize="30" Foreground="Black"/>
+                        <TextBlock x:Name="Title" Text="Title" HorizontalAlignment="Center" MinHeight="50" FontSize="30"/>
                     </Border>
                 
                     <!-- Body Text -->
-                    <ScrollViewer Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AliceBlue" Padding="10" Opacity="0.9">
-                        <TextBlock x:Name="Body" Text="Body" HorizontalAlignment="Center" FontSize="20" Foreground="Black"/>
-                    </ScrollViewer>
+                    <Border Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Opacity="0.9" Background="AliceBlue" PointerPressed="TextClick" Cursor="Hand">
+                        <TextBlock x:Name="Body" Text="Body" HorizontalAlignment="Center" FontSize="20" />
+                    </Border>
                 
                     <!-- Buttons -->
                     <Border Grid.Row="2" Padding="2" Background="White" Opacity="0.9">
                         <UniformGrid Columns="3">
                             <Button Content="Choice1"
                                     x:Name="Choice1"
+                                    Click="ButtonChoiceLeft"
                                     FontSize="20"
                                     MinHeight="60"
                                     HorizontalAlignment="Stretch"
                                     VerticalContentAlignment="Center"
-                                    HorizontalContentAlignment="Center"
-                                    Background="White"
-                                    Foreground="Black"/>
+                                    HorizontalContentAlignment="Center"/>
                             <Button Content="Choice2"
                                     x:Name="Choice2"
+                                    Click="ButtonChoiceCenter"
                                     FontSize="20"
                                     MinHeight="60"
                                     HorizontalAlignment="Stretch" 
                                     VerticalContentAlignment="Center"
-                                    HorizontalContentAlignment="Center"
-                                    Background="White"
-                                    Foreground="Black"/>
+                                    HorizontalContentAlignment="Center"/>
                             <Button Content="Choice3"
                                     x:Name="Choice3"
+                                    Click="ButtonChoiceRight"
                                     FontSize="20"
                                     MinHeight="60"
                                     HorizontalAlignment="Stretch"
                                     VerticalContentAlignment="Center"
-                                    HorizontalContentAlignment="Center"
-                                    Background="White"
-                                    Foreground="Black"/>
+                                    HorizontalContentAlignment="Center"/>
                         </UniformGrid>
                     </Border>
                 
