@@ -1,5 +1,6 @@
 namespace Noulla
 
+open Avalonia.Controls.Templates
 open Noulla.modules
 open Parser
 open System
@@ -45,10 +46,9 @@ type MainWindow() as this =
     
     do
         this.InitializeComponent()
-        this.StretchWindowResolution()
-        this.StretchBackgroundImage()
-        this.SetCharacter("char1.png", "left")
-        
+        //this.StretchWindowResolution()
+        this.StretchBackgroundImage()        
+        //this.SetCharacter(this.GetBitmap("character", "char1.png"), "left")
         
         //this.SetBackground(this.GetBitmap("backgrounds", "bg1.jpg"))
         
@@ -75,43 +75,46 @@ type MainWindow() as this =
     
     member private this.ExecuteNextCommand() =
         if currentIndex < currentCommands.Length then
-            
-            let cmd = currentCommands.[currentIndex]
+            let cmd = currentCommands.[currentIndex] // Get Command by Index and matching it
             
             match cmd with
-            | Background img ->
-                let bitmap = this.GetBitmap("backgrounds", img)
-                this.SetBackground(bitmap)
-            | CharacterShow (one, two) ->
-                printfn "character show"
-            | CharacterClear pos ->
-                printfn "character clear"
-            | TitleShow txt ->
-                printfn "text"
-            | TitleClear ->
-                printfn "text"
-            | TextShow txt ->
-                this.SetTitleText("tst")
-            | TextClear ->
-                printfn "text"
-            | ChoiceShow (id, txt, save, next) ->
-                printfn "txt"
-            | ChoiceHide id ->
-                printfn "txt"
-            | WaitClick ->
+            | WaitClick | WaitChoice ->
                 ()
-            | WaitChoice ->
-                ()
+                
             | Goto sceneId ->
                 currentCommands <- story.[sceneId]
                 currentIndex <- 0
                 this.ExecuteNextCommand()
-            | Save data ->
-                printfn "data"
+                
+            | _ ->
+                match cmd with
+                | Background img ->
+                    let bitmap = this.GetBitmap("backgrounds", img)
+                    this.SetBackground(bitmap)
+                | CharacterShow (name, position) ->
+                    let bitmap = this.GetBitmap("characters", name)
+                    this.SetCharacter(bitmap, position)
+                | CharacterClear position ->
+                    this.ClearCharacter position
+                | TitleShow text ->
+                    this.SetTitleText text
+                | TitleClear ->
+                    this.ClearTitleText()
+                | TextShow text ->
+                    this.SetBodyText(text)
+                | TextClear ->
+                    this.ClearBodyText()
+                | ChoiceShow (id, text, save, next) ->
+                    this.SetChoice(text, id)
+                | ChoiceHide id ->
+                    this.HideChoice(id)
+                | Goto _sceneId -> ()
+                | Save data ->
+                    printfn "data"
+                | WaitClick | WaitChoice -> ()
 
-            match cmd with
-            | WaitClick | WaitChoice -> ()
-            | _ -> currentIndex <- currentIndex + 1
+                currentIndex <- currentIndex + 1
+                this.ExecuteNextCommand()
     
     
     
@@ -135,23 +138,23 @@ type MainWindow() as this =
     
     
 
-    member this.TextClick(sender: obj, e: Avalonia.Input.PointerPressedEventArgs) =
-        this.ClearCharacter("left")
-        this.ClearCharacter("center")
-        this.ClearCharacter("right")
-        e.Handled <- true
+    member this.TextClick(_sender: obj, _e: Avalonia.Input.PointerPressedEventArgs) =
+         if currentIndex < currentCommands.Length then
+             match currentCommands.[currentIndex] with
+             | WaitClick ->
+                 currentIndex <- currentIndex + 1
+                 this.ExecuteNextCommand()
+             | _ -> ()
         
     member this.ButtonChoiceLeft(sender: obj, e: RoutedEventArgs) =
-        this.SetCharacter("char1.png", "left")
+        this.SetCharacter(this.GetBitmap("character", "char1.png"), "left")
     
     member this.ButtonChoiceCenter(sender: obj, e: RoutedEventArgs) =
-        this.SetCharacter("char1.png", "center")
+        this.SetCharacter(this.GetBitmap("character", "char1.png"), "center")
     
     member this.ButtonChoiceRight(sender: obj, e: RoutedEventArgs) =
-        this.SetCharacter("char1.png", "right")
-    
-    
-    
+        this.HideChoice("1")
+   
     
     
     
@@ -177,15 +180,15 @@ type MainWindow() as this =
         this.FindControl<Image>("Background").Height <- height
         
     // Set Background from Dictionary
-    member private this.SetBackground(bitmap: Bitmap) =
-        this.FindControl<Image>("Background").Source <- bitmap
+    member private this.SetBackground(background: Bitmap) =
+        this.FindControl<Image>("Background").Source <- background
         
     // Set Character from Dictionary
-    member private this.SetCharacter(character: string, position: string) =
+    member private this.SetCharacter(character: Bitmap, position: string) =
         match position with
-        | "left" -> this.FindControl<Image>("CharacterLeftPosition").Source <- this.GetBitmap("characters", character)
-        | "right" -> this.FindControl<Image>("CharacterRightPosition").Source <- this.GetBitmap("characters", character)
-        | "center" -> this.FindControl<Image>("CharacterCenterPosition").Source <- this.GetBitmap("characters", character)
+        | "left" -> this.FindControl<Image>("CharacterLeftPosition").Source <- character
+        | "center" -> this.FindControl<Image>("CharacterCenterPosition").Source <- character
+        | "right" -> this.FindControl<Image>("CharacterRightPosition").Source <- character
         | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
         
     // Clear Character
@@ -200,19 +203,46 @@ type MainWindow() as this =
     member private this.SetTitleText(text: string) =
         this.FindControl<TextBlock>("Title").Text <- text
         
+    // Clear Title
+    member private this.ClearTitleText() =
+        this.FindControl<TextBlock>("Title").Text <- null
+                
     // Set Body Text
     member private this.SetBodyText(text: string) =
         this.FindControl<TextBlock>("Body").Text <- text
         
-    // Set Button Text
-    member private this.SetButtonText(text: string, position: string) =
-        match position with
-        | "left" -> this.FindControl<Button>("Choice1").Content <- text
-        | "center" -> this.FindControl<Button>("Choice2").Content <- text
-        | "right" -> this.FindControl<Button>("Choice3").Content <- text
-        | _ -> raise (ArgumentOutOfRangeException(nameof position, position, null))
+    // Clear Body Text
+    member private this.ClearBodyText() =
+        this.FindControl<TextBlock>("Body").Text <- null
             
-            
+    // Set ChoiceButton Text
+    member private this.SetChoice(text: string, id: string) =
+        match id with
+        | "1" ->
+            this.FindControl<Button>("Choice1").IsVisible <- true
+            this.FindControl<Button>("Choice1").Content <- text
+        | "2" ->
+            this.FindControl<Button>("Choice2").IsVisible <- true
+            this.FindControl<Button>("Choice2").Content <- text
+        | "3" ->
+            this.FindControl<Button>("Choice3").IsVisible <- true
+            this.FindControl<Button>("Choice3").Content <- text
+        | _ -> raise (ArgumentOutOfRangeException(nameof id, id, null))
+    
+    // Hide Choice Buttons by ID
+    member private this.HideChoice(id: string) =
+        match id with
+        | "1" -> this.FindControl<Button>("Choice1").IsVisible <- false
+        | "2" -> this.FindControl<Button>("Choice2").IsVisible <- false
+        | "3" -> this.FindControl<Button>("Choice3").IsVisible <- false
+        | _ -> raise (ArgumentOutOfRangeException(nameof id, id, null))
+    
+    member private this.Save data =
+        ()
+    
+    
+    
+    
     
     member private this.InitializeComponent() =
         #if DEBUG
