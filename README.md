@@ -73,7 +73,7 @@ Isn't complete yet...
 
 > `id` is a button identificator as: 1 = left, 2 = center, 3 = right
 
-> `save` variable for save file. `name : value` example "sleep yes" will transcode into `string sleep = "yes"`
+> `save` variable for save file. example "sleep yes" will transcode into `string sleep = "yes"`
 
 > `next` move to the scene on json that you need
 <br>
