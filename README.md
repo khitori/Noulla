@@ -1,10 +1,21 @@
 Isn't complete yet...
 
 ---
-
-<br>
 <br>
 
+## Folder structure:
+
+- Program.fs --- EntryPoint
+- MainWindow.axaml --- Declarative UI layout of main window presentation
+- MainWindow.axaml.fs --- Functionality of main window
+- /Assets/ --- Destination for sprites
+  - Backgrounds/ --- Contains background images like: `Forest1.png`
+  - Characters/ --- Contains character sprites like `Alice1.png`
+- /Content/ --- Destination for a single .json file
+  - Contains only one `story.json` file
+- /Modules/ --- Destination for a core modules of engine like: `Parser.fs`
+
+<br>
 
 ## `story.json` commands:
 > Style: `command (argument1) (argument2) etc.`
@@ -88,16 +99,3 @@ Isn't complete yet...
 > `data` same as `save` on `choice_show`
 <br>
 
-
-
-## Folder structure:
-
-- Program.fs --- EntryPoint
-- MainWindow.axaml --- Declarative UI layout of main window presentation
-- MainWindow.axaml.fs --- Functionality of main window
-- /Assets/ --- Destination for sprites
-  - Backgrounds/ --- Contains background images like: `Forest1.png`
-  - Characters/ --- Contains character sprites like `Alice1.png`
-- /Content/ --- Destination for a single .json file
-  - Contains only one `story.json` file
-- /Modules/ --- Destination for a core modules of engine like: `Parser.fs`
