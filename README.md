@@ -49,7 +49,7 @@ Isn't complete yet...
 `character_clear (position)` clear character sprite
 > { "cmd": "*character_clear*", "position": "*left*" }
 
-> `position` same as on `character_show`
+> `position` same as in `character_show`
 <br>
 
 `title_show (text)` set title text
@@ -96,6 +96,6 @@ Isn't complete yet...
 `save (data)` save variable to file
 > { "cmd": "*save*", "data": "*name value*" }
 
-> `data` same as `save` on `choice_show`
+> `data` same as `save` in `choice_show`
 <br>
 
