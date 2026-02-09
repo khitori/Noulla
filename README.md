@@ -75,7 +75,7 @@ Isn't complete yet...
 
 > `save` variable for save file. example "sleep yes" will transcode into `string sleep = "yes"`
 
-> `next` move to the scene on json that you need
+> `next` move to the scene in json that you need
 <br>
 
 `choice_hide (id)` hide button
