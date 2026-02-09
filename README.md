@@ -6,7 +6,7 @@ Isn't complete yet...
 <br>
 
 
-## Commands of `story.json`
+## `story.json` commands:
 > Style: `command (argument1) (argument2) etc.`
 
 > `"cmd"` is a main command operator
