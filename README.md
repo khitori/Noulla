@@ -71,7 +71,7 @@ Isn't complete yet...
 `choice_show (id) (text) (save) (next)` set the button with text and optionally save or goto function
 > { "cmd": "*choice_show*", "id": "*1*", "save": "*name value*", "next": "*scene*" }
 
-> `id` is a button identificator as: 1 = left, 2 = center, 3 = right
+> `id` is a button identificator: 1 = left, 2 = center, 3 = right
 
 > `save` variable for save file. example "sleep yes" will transcode into `string sleep = "yes"`
 
