@@ -94,10 +94,8 @@ type MainWindow() as this =
     do
         this.InitializeComponent()
         privateSaveData <- loadSaveData()
-        //this.StretchWindowResolution()
-        this.StretchBackgroundImage()        
-        //this.SetCharacter(this.GetBitmap("character", "char1.png"), "left")
-        //this.SetBackground(this.GetBitmap("backgrounds", "bg1.jpg"))
+        this.StretchWindowResolution()
+        this.StretchBackgroundImage()
 
         //let allButtons = ["left"; "center"; "right"]
         //allButtons |> List.iter (fun f -> this.SetButtonText("TEST", f))
