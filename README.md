@@ -99,3 +99,6 @@ Isn't complete yet...
 > `data` same as `save` in `choice_show`
 <br>
 
+`if_save (key, value, scene)` read saved variable from save.json
+> { "cmd": "if_save", "key": "...", "value": "...", "scene": "..." }
+<br>
