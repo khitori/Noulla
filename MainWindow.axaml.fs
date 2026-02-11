@@ -16,7 +16,11 @@ open Avalonia.Platform
 
 
 
-
+type ButtonData = {
+    Text: string
+    Save: string option
+    Next: string option
+}
 
 type MainWindow() as this =
     inherit Window ()
@@ -83,6 +87,7 @@ type MainWindow() as this =
         | ex ->
             printfn $"ERROR saving: {ex.Message}"
     
+    let mutable privateButtonData: Map<string, ButtonData> = Map.empty
     
     
     
@@ -151,8 +156,10 @@ type MainWindow() as this =
                 | TextClear ->
                     this.ClearBodyText()
                 | ChoiceShow (id, text, save, next) ->
+                    privateButtonData <- privateButtonData |> Map.add id { Text = text; Save = save; Next = next }
                     this.SetChoice(text, id)
                 | ChoiceHide id ->
+                    privateButtonData <- privateButtonData |> Map.remove id
                     this.HideChoice id
                 | Save data ->
                     this.HandleSave data
@@ -208,15 +215,34 @@ type MainWindow() as this =
                  this.ExecuteNextCommand()
              | _ -> ()
         
-    member this.ButtonChoiceLeft(sender: obj, e: RoutedEventArgs) =
-        this.SetCharacter(this.GetBitmap("character", "char1.png"), "left")
-    
-    member this.ButtonChoiceCenter(sender: obj, e: RoutedEventArgs) =
-        this.SetCharacter(this.GetBitmap("character", "char1.png"), "center")
-    
-    member this.ButtonChoiceRight(sender: obj, e: RoutedEventArgs) =
-        this.HideChoice("1")
-   
+    member this.OnButtonClick(id: string) =
+        if currentIndex >= currentCommands.Length then ()
+        else
+            match currentCommands[currentIndex] with
+            | WaitChoice ->
+                match Map.tryFind id privateButtonData with
+                | Some data ->
+                    data.Save |> Option.iter this.HandleSave
+                    match data.Next with
+                    | Some sceneId ->
+                        currentCommands <- story[sceneId]
+                        currentIndex <- 0
+                    | None -> currentIndex <- currentIndex + 1
+                    this.ExecuteNextCommand()
+                | None -> printfn $"WARN: Button {id} has no data"
+            | _ -> ()
+
+
+
+    member this.OnButtonClickHandler(sender: obj, _e: RoutedEventArgs) =
+        match sender with
+        | :? Button as btn ->
+            match btn.Name with
+            | "Choice1" -> this.OnButtonClick("1")
+            | "Choice2" -> this.OnButtonClick("2")
+            | "Choice3" -> this.OnButtonClick("3")
+            | name -> printfn $"WARN: Unknown button name: {name}"
+        | _ -> ()
     
     
     
