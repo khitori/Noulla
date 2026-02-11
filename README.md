@@ -100,5 +100,5 @@ Isn't complete yet...
 <br>
 
 `if_save (key, value, scene)` read saved variable from save.json
-> { "cmd": "if_save", "key": "...", "value": "...", "scene": "..." }
+> { "cmd": "*if_save*", "key": "*variable name*", "value": "*variable value*", "scene": "*scene name*" }
 <br>
