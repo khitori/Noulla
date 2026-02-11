@@ -13,7 +13,7 @@ Isn't complete yet...
   - Characters/ --- Contains character sprites like `Alice1.png`
 - /Content/ --- Destination for a single .json file
   - Contains only one `story.json` file
-- /Modules/ --- Destination for a core modules of engine like: `Parser.fs`
+- /Modules/ --- Destination for a core engine modules like: `Parser.fs`
 
 <br>
 
