@@ -1,5 +1,6 @@
 namespace Noulla
 
+open System.Text.Json
 open Avalonia.Controls.Templates
 open Noulla.modules
 open Parser
@@ -35,26 +36,63 @@ type MainWindow() as this =
     let mutable currentCommands: Command list = []
     let mutable currentIndex = 0
     
+    
+    
     let loadStoryJson() =
         let uri: Uri = Uri("avares://Noulla/Content/story.json")
         use stream = AssetLoader.Open(uri)
         use reader = new StreamReader(stream)
         reader.ReadToEnd()
     
+    // In-memory save state
+    let mutable privateSaveData: Map<string, string> = Map.empty
+    
+    // Get cross-platform save directory
+    let getSaveDirectory() =
+        let baseDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+        Path.Combine(baseDir, "Noulla", "saves")
+    
+    // Get path to save file
+    let getSaveFile() =
+        let dir = getSaveDirectory()
+        Directory.CreateDirectory(dir) |> ignore
+        Path.Combine(dir, "save.json")
+    
+    // Load save on start
+    let loadSaveData() : Map<string, string> =
+        let path = getSaveFile()
+        if File.Exists(path) then
+            try
+                let json = File.ReadAllText(path)
+                JsonSerializer.Deserialize<Map<string, string>>(json) |> Option.ofObj |> Option.defaultValue Map.empty
+            with
+            | _ ->
+                printfn "WARN: Save file corrupted, starting fresh"
+                Map.empty
+        else
+            Map.empty
+            
+    // Save on disk
+    let saveSaveData(data: Map<string, string>) =
+        try
+            let path = getSaveFile()
+            let options = JsonSerializerOptions(WriteIndented = true)
+            let json = JsonSerializer.Serialize(data, options)
+            File.WriteAllText(path, json)
+        with
+        | ex ->
+            printfn $"ERROR saving: {ex.Message}"
+    
     
     
     
     do
         this.InitializeComponent()
+        privateSaveData <- loadSaveData()
         //this.StretchWindowResolution()
         this.StretchBackgroundImage()        
         //this.SetCharacter(this.GetBitmap("character", "char1.png"), "left")
-        
         //this.SetBackground(this.GetBitmap("backgrounds", "bg1.jpg"))
-        
-        //this.ClearCharacter("left")
-        //this.SetTitleText("TEST")
-        //this.SetBodyText("TEST")
 
         //let allButtons = ["left"; "center"; "right"]
         //allButtons |> List.iter (fun f -> this.SetButtonText("TEST", f))
@@ -64,28 +102,36 @@ type MainWindow() as this =
     
     
     
-    
-    
     member this.LoadStory() =
         let json = loadStoryJson()
         story <- Parse(json)
-        currentCommands <- story.["start"]
+        currentCommands <- story["start"]
         currentIndex <- 0
         this.ExecuteNextCommand()
     
     member private this.ExecuteNextCommand() =
         if currentIndex < currentCommands.Length then
-            let cmd = currentCommands.[currentIndex] // Get Command by Index and matching it
+            let cmd = currentCommands[currentIndex] // Get Command by Index and matching it
             
             match cmd with
             | WaitClick | WaitChoice ->
                 ()
                 
             | Goto sceneId ->
-                currentCommands <- story.[sceneId]
+                currentCommands <- story[sceneId]
                 currentIndex <- 0
                 this.ExecuteNextCommand()
                 
+            | IfSave (key, expected, scene) ->
+                match this.GetSaveValue(key) with
+                | Some value when value = expected ->
+                    currentCommands <- story[scene]
+                    currentIndex <- 0
+                    this.ExecuteNextCommand()
+                | _ ->
+                    currentIndex <- currentIndex + 1
+                    this.ExecuteNextCommand()
+
             | _ ->
                 match cmd with
                 | Background img ->
@@ -101,20 +147,36 @@ type MainWindow() as this =
                 | TitleClear ->
                     this.ClearTitleText()
                 | TextShow text ->
-                    this.SetBodyText(text)
+                    this.SetBodyText text
                 | TextClear ->
                     this.ClearBodyText()
                 | ChoiceShow (id, text, save, next) ->
                     this.SetChoice(text, id)
                 | ChoiceHide id ->
-                    this.HideChoice(id)
-                | Goto _sceneId -> ()
+                    this.HideChoice id
                 | Save data ->
-                    printfn "data"
-                | WaitClick | WaitChoice -> ()
+                    this.HandleSave data
+                | WaitClick | WaitChoice | Goto _ | IfSave _ -> ()
 
                 currentIndex <- currentIndex + 1
                 this.ExecuteNextCommand()
+    
+    
+    
+    // Get save value
+    member this.GetSaveValue(key: string) : string option =
+        Map.tryFind key privateSaveData 
+    
+    // Main save function
+    member private this.HandleSave(data: string) =
+        let parts = data.Split(' ', 2)
+        if parts.Length = 2 then
+            let key, value = parts[0], parts[1]
+            privateSaveData <- privateSaveData |> Map.add key value
+            saveSaveData privateSaveData
+            printfn $"SAVE: {key} = {value}"
+        else
+            printfn $"WARN: Invalid save format: {data}"
     
     
     
@@ -140,7 +202,7 @@ type MainWindow() as this =
 
     member this.TextClick(_sender: obj, _e: Avalonia.Input.PointerPressedEventArgs) =
          if currentIndex < currentCommands.Length then
-             match currentCommands.[currentIndex] with
+             match currentCommands[currentIndex] with
              | WaitClick ->
                  currentIndex <- currentIndex + 1
                  this.ExecuteNextCommand()
@@ -236,9 +298,6 @@ type MainWindow() as this =
         | "2" -> this.FindControl<Button>("Choice2").IsVisible <- false
         | "3" -> this.FindControl<Button>("Choice3").IsVisible <- false
         | _ -> raise (ArgumentOutOfRangeException(nameof id, id, null))
-    
-    member private this.Save data =
-        ()
     
     
     
